@@ -73,11 +73,11 @@ Eigen::Matrix<double, 18, 18> df_dx(state_ikfom s, input_ikfom in, double &dt)
 {
 	Eigen::Matrix<double, 18, 18> cov = Eigen::Matrix<double, 18, 18>::Identity();
 	//旋转
-	cov.template block<3, 3>(0, 0) = Matrix<double, 3, 3>::Identity() + s.rot.matrix() * skewSymmetric(s.bg);
+	cov.template block<3, 3>(0, 0) = Matrix<double, 3, 3>::Identity() + dt * s.rot.matrix() * skewSymmetric(s.bg);
 	cov.template block<3, 3>(0, 9) = -s.rot.matrix() * dt;		
 
 	//位置
-	cov.block<3, 3>(3, 0) = skewSymmetric(s.pos + s.vel * dt) * s.rot.matrix() * skewSymmetric(s.bg);	 
+	cov.block<3, 3>(3, 0) = dt * skewSymmetric(s.pos + s.vel * dt) * s.rot.matrix() * skewSymmetric(s.bg);
 	cov.block<3, 3>(3, 6) = Eigen::Matrix3d::Identity() * dt;
 	cov.block<3, 3>(3, 9) = -dt * skewSymmetric((s.pos + s.vel * dt)) * s.rot.matrix();	
 	
@@ -88,15 +88,15 @@ Eigen::Matrix<double, 18, 18> df_dx(state_ikfom s, input_ikfom in, double &dt)
 	cov.block<3, 3>(6, 15) = dt * Matrix<double, 3, 3>::Identity();
 
 	//bg
-	cov.block<3, 3>(9, 0) = skewSymmetric(s.bg) * s.rot.matrix() * skewSymmetric(s.bg);
+	cov.block<3, 3>(9, 0) = dt * skewSymmetric(s.bg) * s.rot.matrix() * skewSymmetric(s.bg);
 	cov.block<3, 3>(9, 9) = Eigen::Matrix<double, 3, 3>::Identity() - dt * skewSymmetric(s.bg) * s.rot.matrix();
 	
 	//ba
-	cov.block<3, 3>(12, 0) = skewSymmetric(s.ba) * s.rot.matrix() * skewSymmetric(s.bg);
+	cov.block<3, 3>(12, 0) = dt * skewSymmetric(s.ba) * s.rot.matrix() * skewSymmetric(s.bg);
 	cov.block<3, 3>(12, 9) = - dt * skewSymmetric(s.ba) * s.rot.matrix();
 
 	//g
-	cov.block<3, 3>(15, 0) = skewSymmetric(s.grav) * s.rot.matrix() * skewSymmetric(s.bg);
+	cov.block<3, 3>(15, 0) = dt * skewSymmetric(s.grav) * s.rot.matrix() * skewSymmetric(s.bg);
 	cov.block<3, 3>(15, 9) = - dt * skewSymmetric(s.grav) * s.rot.matrix();
 
 	return cov;

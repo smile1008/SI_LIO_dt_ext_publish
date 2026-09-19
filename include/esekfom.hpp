@@ -75,6 +75,8 @@ namespace esekfom
 			x_r.bg = x.bg + f_.block<3, 1>(9, 0);
 			x_r.ba = x.ba + f_.block<3, 1>(12, 0);
 			x_r.grav = x.grav + f_.block<3, 1>(15, 0);
+			x_r.offset_R_L_I = x.offset_R_L_I;
+			x_r.offset_T_L_I = x.offset_T_L_I;
 
 			return x_r;
 		}
@@ -295,6 +297,8 @@ namespace esekfom
 				x_.bg = newx_.block<3, 1>(0, 5);
 				x_.ba = newx_.block<3, 1>(0, 6);
 				x_.grav = newx_.block<3, 1>(0, 7);
+				x_.offset_R_L_I = x_propagated.offset_R_L_I;
+				x_.offset_T_L_I = x_propagated.offset_T_L_I;
 
 				P_ = P_propagated - K * H * P_propagated; 
 				// double t11 = omp_get_wtime();
